@@ -5,6 +5,7 @@ and Gemini Vision multimodal fallback.
 """
 import io
 import logging
+import os
 
 import pytesseract
 from PIL import Image, ImageEnhance, ImageFilter
@@ -13,8 +14,9 @@ from app.core.config import settings
 
 logger = logging.getLogger("healthguardian.ai.ocr")
 
-# Optional Windows Tesseract installation path
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# Optional Windows Tesseract installation path fallback
+if os.name == "nt" and os.path.exists(r"C:\Program Files\Tesseract-OCR\tesseract.exe"):
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 
 def extract_text_from_pdf(pdf_bytes: bytes) -> str:
