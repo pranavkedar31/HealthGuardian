@@ -3,6 +3,7 @@ Authentication business logic: registration, login, token issuance,
 with separate Doctor and Patient workflows and backend verification code validation.
 """
 from typing import Optional
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 

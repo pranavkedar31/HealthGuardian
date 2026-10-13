@@ -4,12 +4,12 @@ from __future__ import annotations
 import hashlib
 import secrets
 import smtplib
-from urllib.parse import quote
 from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
+from urllib.parse import quote
 
 import httpx
-from fastapi import HTTPException, status
+from fastapi import HTTPException
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 

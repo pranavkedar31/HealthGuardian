@@ -9,9 +9,10 @@ Tests for immutable demographic profile fields enforcement:
 - Chatbot demographic change guard
 """
 import pytest
+
 from app.models.user import UserRole
-from app.services.auth_service import AuthService
 from app.schemas.user import PatientRegisterRequest
+from app.services.auth_service import AuthService
 
 
 class TestImmutableProfileFields:

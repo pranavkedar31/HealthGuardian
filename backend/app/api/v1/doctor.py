@@ -14,7 +14,6 @@ from app.services.appointment_service import appointment_to_out
 from app.services.doctor_service import DoctorService
 from app.services.report_service import ReportService
 
-
 router = APIRouter(prefix="/doctor", tags=["Doctor"])
 
 

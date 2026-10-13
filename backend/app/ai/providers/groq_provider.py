@@ -6,8 +6,8 @@ import concurrent.futures
 import logging
 from typing import Optional
 
-from app.core.config import settings
 from app.ai.providers.base import AIProviderResponse, BaseAIProvider
+from app.core.config import settings
 
 logger = logging.getLogger("healthguardian.ai.groq")
 

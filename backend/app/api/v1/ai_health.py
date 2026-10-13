@@ -2,10 +2,11 @@
 AI Providers Health Check and Doctor/Admin ML Model Performance Endpoints.
 """
 from fastapi import APIRouter, Depends, HTTPException, status
-from app.core.deps import get_current_user
-from app.models.user import User, UserRole
+
 from app.ai.provider_manager import get_ai_provider_manager
 from app.ai.risk_predictor import get_risk_predictor
+from app.core.deps import get_current_user
+from app.models.user import User, UserRole
 
 router = APIRouter(prefix="/ai", tags=["AI Status & ML Performance"])
 

@@ -4,7 +4,6 @@ Provides trusted clinical guidelines and medical evidence to ground LLM response
 """
 from typing import Optional
 
-
 MEDICAL_KNOWLEDGE_BASE = [
     {
         "id": "diabetes_guidelines",

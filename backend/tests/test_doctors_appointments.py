@@ -5,10 +5,10 @@ double-booking prevention, and status synchronization.
 import uuid
 from datetime import date, datetime, timedelta, timezone
 
+from app.core.security import create_access_token, hash_password
 from app.models.appointment import Appointment, AppointmentStatus
 from app.models.doctor_profile import DoctorProfile
 from app.models.user import User, UserRole
-from app.core.security import hash_password, create_access_token
 
 
 def _create_doctor_with_profile(
@@ -66,7 +66,7 @@ def _create_doctor_with_profile(
 
 class TestDoctorDiscovery:
     def test_search_doctors_proximity_and_filters(self, client, db_session):
-        doc1 = _create_doctor_with_profile(
+        _create_doctor_with_profile(
             db_session,
             full_name="Dr. Amit Sharma",
             email=f"amit_{uuid.uuid4().hex[:6]}@test.com",
@@ -78,7 +78,7 @@ class TestDoctorDiscovery:
             lat=20.7002,
             lon=77.0082,
         )
-        doc2 = _create_doctor_with_profile(
+        _create_doctor_with_profile(
             db_session,
             full_name="Dr. Priya Deshmukh",
             email=f"priya_{uuid.uuid4().hex[:6]}@test.com",

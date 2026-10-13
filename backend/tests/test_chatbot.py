@@ -3,8 +3,9 @@ Comprehensive tests for HealthGuardian AI Chatbot, Provider Manager,
 Health Domain Gate, Emergency Detection, and ML Risk Prediction.
 """
 from unittest.mock import patch
-from app.ai.providers.base import AIProviderResponse
+
 from app.ai.provider_manager import AIProviderManager
+from app.ai.providers.base import AIProviderResponse
 
 
 class TestChatbot:

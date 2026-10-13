@@ -6,10 +6,10 @@ health checks, and clinical fail-safes.
 import logging
 from typing import Optional
 
-from app.core.config import settings
 from app.ai.providers.base import AIProviderResponse, BaseAIProvider
 from app.ai.providers.gemini_provider import GeminiProvider
 from app.ai.providers.groq_provider import GroqProvider
+from app.core.config import settings
 
 logger = logging.getLogger("healthguardian.ai.manager")
 

@@ -2,11 +2,10 @@
 Reusable FastAPI dependencies: DB session, current user, role guards.
 """
 import uuid
-
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from app.core.security import TokenPayloadError, decode_token

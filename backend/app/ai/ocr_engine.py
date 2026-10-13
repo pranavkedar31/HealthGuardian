@@ -5,10 +5,9 @@ and Gemini Vision multimodal fallback.
 """
 import io
 import logging
-from typing import Optional
 
-from PIL import Image, ImageEnhance, ImageFilter
 import pytesseract
+from PIL import Image, ImageEnhance, ImageFilter
 
 from app.core.config import settings
 

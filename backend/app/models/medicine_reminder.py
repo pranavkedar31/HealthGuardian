@@ -1,12 +1,15 @@
 import uuid
 from datetime import datetime, time
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, Time
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.db.types import GUID
 from app.db.base_class import Base, TimestampMixin, UUIDMixin
+from app.db.types import GUID
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class MedicineReminder(UUIDMixin, TimestampMixin, Base):

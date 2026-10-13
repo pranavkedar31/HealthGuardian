@@ -2,6 +2,7 @@
 HealthGuardian FastAPI application entrypoint.
 """
 import logging
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -12,11 +13,11 @@ from app.api.v1.router import api_router
 from app.core.config import settings
 from app.middleware.logging_middleware import LoggingMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
-from contextlib import asynccontextmanager
 from app.services.reminder_scheduler import (
     start_reminder_scheduler,
     stop_reminder_scheduler,
 )
+
 logging.basicConfig(level=logging.INFO if not settings.DEBUG else logging.DEBUG)
 
 # Resolve uploads dir as an absolute path regardless of CWD the process is

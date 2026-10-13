@@ -6,7 +6,6 @@ ensuring no diagnostic overstepping, hallucinated facts, or code leaks.
 import re
 from typing import Optional
 
-
 SAFE_VALIDATION_FALLBACK = (
     "Based on HealthGuardian clinical safety standards, this inquiry requires evaluation "
     "by a qualified healthcare provider. HealthGuardian is designed for health education "

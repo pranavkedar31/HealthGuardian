@@ -3,7 +3,8 @@ WhatsApp Cloud API Service for HealthGuardian.
 Handles normalized messaging, detailed API logging, credential health checks, and error diagnostics.
 """
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Dict
+
 import httpx
 
 from app.core.config import settings
@@ -166,7 +167,7 @@ def send_whatsapp_message(
             msg_id = ""
             if "messages" in data and len(data["messages"]) > 0:
                 msg_id = data["messages"][0].get("id", "")
-            print(f"[WhatsApp] API response error code: NONE")
+            print("[WhatsApp] API response error code: NONE")
             print(f"[WhatsApp] API response message: SUCCESS (Message ID: {msg_id})")
             return WhatsAppResult({
                 "success": True,
@@ -185,7 +186,6 @@ def send_whatsapp_message(
         try:
             err_json = response.json().get("error", {})
             error_code = str(err_json.get("code", status_code))
-            error_subcode = str(err_json.get("error_subcode", ""))
             error_msg = err_json.get("message", response.text)
             err_data = err_json.get("error_data", {})
             err_details = str(err_data.get("details", ""))
@@ -220,7 +220,7 @@ def send_whatsapp_message(
         })
 
     except Exception as exc:
-        print(f"[WhatsApp] API response error code: EXCEPTION")
+        print("[WhatsApp] API response error code: EXCEPTION")
         print(f"[WhatsApp] API response message: {str(exc)}")
         return WhatsAppResult({
             "success": False,

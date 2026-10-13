@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.v1 import (
     admin,
+    ai_health,
     appointments,
     auth,
     chatbot,
@@ -9,16 +10,15 @@ from app.api.v1 import (
     doctor,
     doctors,
     health_profile,
+    integrations,
     notifications,
     predictions,
     reminders,
     reports,
     symptoms,
     users,
-    workout,
     vitals,
-    integrations,
-    ai_health,
+    workout,
 )
 
 api_router = APIRouter()

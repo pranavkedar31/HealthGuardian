@@ -6,7 +6,6 @@ Paths are resolved relative to this file's location (app/utils/..), so
 behavior is identical regardless of the process's current working
 directory.
 """
-import os
 import uuid
 from pathlib import Path
 

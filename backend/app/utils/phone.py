@@ -9,10 +9,10 @@ from typing import Tuple
 def normalize_phone_number(raw_phone: str) -> Tuple[bool, str, str, str]:
     """
     Normalizes a given phone number.
-    
+
     Returns:
         (is_valid, stored_format, api_format, error_message)
-        
+
     Examples:
         '9922248081'      -> (True, '+919922248081', '919922248081', '')
         '+919922248081'   -> (True, '+919922248081', '919922248081', '')
@@ -28,8 +28,6 @@ def normalize_phone_number(raw_phone: str) -> Tuple[bool, str, str, str]:
     if not cleaned:
         return False, "", "", "Phone number cannot be empty."
 
-    # If it starts with '+', keep track
-    has_plus = cleaned.startswith("+")
     digits_only = re.sub(r"\D", "", cleaned)
 
     if not digits_only:

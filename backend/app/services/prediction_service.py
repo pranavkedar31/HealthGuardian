@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.ai.risk_predictor import get_risk_predictor
 from app.ai.bmi_calculator import calculate_bmi
+from app.ai.risk_predictor import get_risk_predictor
 from app.models.user import User
 from app.repositories.ai_log_repository import AILogRepository
 from app.schemas.prediction import BMIRequest, RiskPredictionRequest

@@ -2,7 +2,9 @@
 Tests for Medicine Reminders, WhatsApp Cloud API health check, and Doctor/Patient Authentication separation.
 """
 import uuid
+
 import pytest
+
 from app.utils.phone import normalize_phone_number
 
 

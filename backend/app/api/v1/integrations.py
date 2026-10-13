@@ -1,7 +1,9 @@
 from typing import Optional
 from urllib.parse import quote_plus
+
 import httpx
 from fastapi import APIRouter, HTTPException, Query
+
 from app.core.config import settings
 
 router = APIRouter(prefix="/integrations", tags=["External health integrations"])

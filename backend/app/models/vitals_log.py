@@ -1,12 +1,15 @@
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import DateTime, Float, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.db.types import GUID
 
 from app.db.base_class import Base, TimestampMixin, UUIDMixin
+from app.db.types import GUID
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class VitalsLog(UUIDMixin, TimestampMixin, Base):

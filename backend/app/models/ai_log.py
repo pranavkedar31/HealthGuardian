@@ -3,9 +3,9 @@ from typing import Optional
 
 from sqlalchemy import JSON, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
-from app.db.types import GUID
 
 from app.db.base_class import Base, TimestampMixin, UUIDMixin
+from app.db.types import GUID
 
 
 class AILog(UUIDMixin, TimestampMixin, Base):

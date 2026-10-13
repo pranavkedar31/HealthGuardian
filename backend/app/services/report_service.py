@@ -1,6 +1,7 @@
 import io
 import logging
 import uuid
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -143,8 +144,8 @@ class ReportService:
 
         from reportlab.lib import colors
         from reportlab.lib.pagesizes import letter
-        from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
         from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+        from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(

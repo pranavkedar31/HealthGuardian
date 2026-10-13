@@ -1,10 +1,10 @@
 import uuid
 from typing import Optional
+
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.models.notification import Notification
-from app.schemas.notification import NotificationCreate
 
 
 class NotificationService:

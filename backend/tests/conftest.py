@@ -21,11 +21,11 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.core.security import create_access_token, hash_password
 from app.db.base_class import Base
 from app.db.session import get_db
 from app.main import app
 from app.models.user import User, UserRole
-from app.core.security import hash_password, create_access_token
 
 TEST_DB_PATH = Path(__file__).resolve().parent / "test_healthguardian.db"
 TEST_DATABASE_URL = f"sqlite:///{TEST_DB_PATH}"

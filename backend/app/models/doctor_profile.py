@@ -1,11 +1,14 @@
 import uuid
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base, TimestampMixin, UUIDMixin
 from app.db.types import GUID
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class DoctorProfile(UUIDMixin, TimestampMixin, Base):

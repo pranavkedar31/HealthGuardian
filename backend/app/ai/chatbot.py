@@ -9,7 +9,6 @@ import re
 from typing import Any, Optional
 from urllib.parse import quote_plus
 
-from app.core.config import settings
 from app.ai.domain_gate import (
     HealthCategory,
     classify_domain,

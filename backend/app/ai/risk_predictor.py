@@ -6,6 +6,7 @@ Selects the best performing validated model based on clinical metric optimizatio
 """
 from dataclasses import dataclass
 from typing import Any, Optional
+
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression

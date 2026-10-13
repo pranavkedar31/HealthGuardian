@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Optional
 from zoneinfo import ZoneInfo
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -10,8 +11,8 @@ from app.schemas.reminder import (
     MedicineReminderCreate,
     MedicineReminderUpdate,
 )
-from app.utils.phone import normalize_phone_number
 from app.services.whatsapp_service import send_whatsapp_message
+from app.utils.phone import normalize_phone_number
 
 INDIA_TIMEZONE = ZoneInfo("Asia/Kolkata")
 
@@ -123,7 +124,7 @@ class ReminderService:
             "You will receive timely reminders for your scheduled medicines and health routines.\n\n"
             "— HealthGuardian Preventive Care"
         )
-        
+
         result = send_whatsapp_message(stored_num, test_msg)
         if not result.get("success"):
             detail_msg = result.get("detail") or result.get("error_message") or "Unable to send WhatsApp message."
@@ -202,7 +203,7 @@ class ReminderService:
             "completed_at": now,
             "snooze_until": None,
         }
-        
+
         freq = (reminder.frequency or "daily").lower()
         if freq == "once":
             changes["is_active"] = False

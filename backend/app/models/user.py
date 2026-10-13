@@ -1,11 +1,23 @@
 import enum
-import uuid
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Boolean, Enum, Float, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base, TimestampMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from app.models.appointment import Appointment
+    from app.models.chat_message import ChatMessage
+    from app.models.diet_plan import DietPlan
+    from app.models.doctor_profile import DoctorProfile
+    from app.models.health_profile import HealthProfile
+    from app.models.medical_report import MedicalReport
+    from app.models.medicine_reminder import MedicineReminder
+    from app.models.notification import Notification
+    from app.models.symptom_log import SymptomLog
+    from app.models.vitals_log import VitalsLog
+    from app.models.workout_plan import WorkoutPlan
 
 
 class UserRole(str, enum.Enum):

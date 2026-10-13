@@ -17,7 +17,6 @@ import difflib
 import re
 from collections import defaultdict
 
-
 # -------------------------------------------------------------------
 # Symptom patterns
 # -------------------------------------------------------------------

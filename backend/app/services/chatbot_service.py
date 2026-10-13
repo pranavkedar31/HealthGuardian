@@ -3,6 +3,7 @@ Chatbot service managing conversation persistence, patient health context,
 AI pipeline invocation, and audit logging.
 """
 from typing import Any
+
 from sqlalchemy.orm import Session
 
 from app.ai.chatbot import execute_chatbot_pipeline

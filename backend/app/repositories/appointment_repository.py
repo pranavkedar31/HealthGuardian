@@ -8,7 +8,6 @@ from app.models.user import User
 from app.repositories.base import BaseRepository
 
 
-
 class AppointmentRepository(BaseRepository[Appointment]):
     def __init__(self, db: Session):
         super().__init__(Appointment, db)

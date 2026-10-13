@@ -1,6 +1,6 @@
 import math
 import uuid
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import HTTPException, status
@@ -14,7 +14,7 @@ from app.models.symptom_log import SymptomLog
 from app.models.user import User, UserRole
 from app.models.vitals_log import VitalsLog
 from app.repositories.appointment_repository import AppointmentRepository
-from app.schemas.appointment import AppointmentOut, AppointmentUpdate
+from app.schemas.appointment import AppointmentUpdate
 from app.schemas.doctor import AvailableSlot, DoctorProfileUpdate, DoctorSearchOut, DoctorSummary
 from app.services.notification_service import NotificationService
 from app.services.whatsapp_service import send_whatsapp_message
@@ -473,7 +473,9 @@ class DoctorService:
 
         import random
         import urllib.parse
+
         import httpx
+
         from app.core.security import hash_password
 
         # If lat and lon are provided but city is not, reverse geocode to find city/locality
