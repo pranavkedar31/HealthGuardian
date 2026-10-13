@@ -43,12 +43,15 @@ jobs:
           SECRET_KEY: ci-test-secret-key
           DATABASE_URL: sqlite:///./test_healthguardian.db
           RATE_LIMIT_ENABLED: "false"
-        run: pytest --cov=app --cov-report=term-missing --cov-report=xml
+        run: pytest --cov=app --cov-report=term-missing --cov-report=xml 2>&1 | tee pytest.log
       - name: Upload coverage report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage
-          path: backend/coverage.xml
+          path: |
+            backend/coverage.xml
+            backend/pytest.log
 
   backend-build:
     name: Backend Docker Build
