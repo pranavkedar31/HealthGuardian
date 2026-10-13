@@ -1,0 +1,424 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  body {
+    margin: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  button, input, textarea, select {
+    font: inherit;
+  }
+  ::selection {
+    background-color: #ccfbf1;
+    color: #134e4a;
+  }
+}
+
+/* ============================================================
+   EXPLICIT LIGHT MODE STYLES (When html has NO .dark class)
+   ============================================================ */
+html:not(.dark) body {
+  background-color: #f4f8f8 !important;
+  color: #0f172a !important;
+}
+html:not(.dark) main:not(.dark-scope):not(.dark-scope *):not([data-theme-scope="dark"]):not([data-theme-scope="dark"] *) {
+  background-color: #f4f8f8 !important;
+}
+html:not(.dark) aside:not(.dark-scope):not(.dark-scope *):not([data-theme-scope="dark"]):not([data-theme-scope="dark"] *) {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) header:not(.dark-scope):not(.dark-scope *):not([data-theme-scope="dark"]):not([data-theme-scope="dark"] *) {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .surface-card {
+  background-color: #ffffff !important;
+  border-color: rgba(226, 232, 240, 0.8) !important;
+  color: #0f172a !important;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.045) !important;
+}
+html:not(.dark) .soft-row {
+  background-color: #ffffff !important;
+  border-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+html:not(.dark) .metric-card {
+  background-color: #f8fafc !important;
+  border-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+html:not(.dark) .input {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+html:not(.dark) .nav-item {
+  color: #64748b !important;
+}
+html:not(.dark) .nav-item:hover {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+html:not(.dark) .nav-item-active {
+  background-color: #f0fdfa !important;
+  color: #115e59 !important;
+}
+
+/* Explicit Light Mode Text Colors (Always high-contrast dark in Light Mode, except within dark-scope or text-white) */
+html:not(.dark) h1:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]),
+html:not(.dark) h2:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]),
+html:not(.dark) h3:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]),
+html:not(.dark) h4:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]),
+html:not(.dark) h5:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]),
+html:not(.dark) h6:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]),
+html:not(.dark) .page-title:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]),
+html:not(.dark) .card-title:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]),
+html:not(.dark) .brand-title:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]),
+html:not(.dark) .user-name:not(.dark-scope *):not([data-theme-scope="dark"] *):not(.text-white):not([class*="text-white"]) {
+  color: #0f172a !important;
+}
+
+/* ------------------------------------------------------------
+   STANDALONE DARK SCOPE (For RoleSelection, Auth hero panels, etc.)
+   Ensures these views always render their intentional dark design
+   ------------------------------------------------------------ */
+.dark-scope,
+[data-theme-scope="dark"],
+html:not(.dark) .dark-scope,
+html:not(.dark) [data-theme-scope="dark"] {
+  background-color: #020617 !important;
+  color: #f8fafc !important;
+}
+.dark-scope header,
+[data-theme-scope="dark"] header,
+html:not(.dark) .dark-scope header,
+html:not(.dark) [data-theme-scope="dark"] header {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+.dark-scope main,
+[data-theme-scope="dark"] main,
+html:not(.dark) .dark-scope main,
+html:not(.dark) [data-theme-scope="dark"] main {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+.dark-scope footer,
+[data-theme-scope="dark"] footer,
+html:not(.dark) .dark-scope footer,
+html:not(.dark) [data-theme-scope="dark"] footer {
+  background-color: transparent !important;
+}
+.dark-scope h1,
+.dark-scope h2,
+.dark-scope h3,
+.dark-scope h4,
+.dark-scope h5,
+.dark-scope h6,
+[data-theme-scope="dark"] h1,
+[data-theme-scope="dark"] h2,
+[data-theme-scope="dark"] h3,
+[data-theme-scope="dark"] h4,
+[data-theme-scope="dark"] h5,
+[data-theme-scope="dark"] h6,
+html:not(.dark) .dark-scope h1,
+html:not(.dark) .dark-scope h2,
+html:not(.dark) .dark-scope h3,
+html:not(.dark) [data-theme-scope="dark"] h1,
+html:not(.dark) [data-theme-scope="dark"] h2,
+html:not(.dark) [data-theme-scope="dark"] h3 {
+  color: #ffffff !important;
+}
+html:not(.dark) .dark-scope p,
+html:not(.dark) [data-theme-scope="dark"] p {
+  color: inherit;
+}
+html:not(.dark) .text-slate-900:not(.dark-scope *):not([data-theme-scope="dark"] *),
+html:not(.dark) .text-slate-950:not(.dark-scope *):not([data-theme-scope="dark"] *),
+html:not(.dark) .text-slate-800:not(.dark-scope *):not([data-theme-scope="dark"] *) {
+  color: #0f172a !important;
+}
+
+/* ============================================================
+   EXPLICIT DARK MODE STYLES (When html HAS .dark class)
+   ============================================================ */
+html.dark body {
+  background-color: #020617 !important;
+  color: #f8fafc !important;
+}
+html.dark main {
+  background-color: #020617 !important;
+}
+html.dark aside {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+html.dark header {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: #1e293b !important;
+}
+html.dark .surface-card {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45) !important;
+}
+html.dark .soft-row {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+html.dark .metric-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+html.dark .input {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #ffffff !important;
+}
+html.dark .nav-item {
+  color: #94a3b8 !important;
+}
+html.dark .nav-item:hover {
+  background-color: rgba(30, 41, 59, 0.6) !important;
+  color: #f8fafc !important;
+}
+html.dark .nav-item-active {
+  background-color: rgba(4, 47, 46, 0.6) !important;
+  color: #5eead4 !important;
+  border: 1px solid rgba(17, 94, 89, 0.5) !important;
+}
+
+/* ------------------------------------------------------------
+   TYPOGRAPHY IN DARK MODE: ALL Headings & Names are Pure White
+   ------------------------------------------------------------ */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6,
+html.dark .page-title,
+html.dark .card-title,
+html.dark .brand-title,
+html.dark .user-name {
+  color: #ffffff !important;
+}
+
+/* Primary text classes that were dark in light mode MUST be crisp pure white in dark mode */
+html.dark .text-slate-950:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-slate-900:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-slate-800:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-gray-950:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-gray-900:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-gray-800:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-zinc-950:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-zinc-900:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-zinc-800:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-neutral-950:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-neutral-900:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-neutral-800:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-black:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *) {
+  color: #ffffff !important;
+}
+
+/* Secondary dark text: slate-700 / gray-700 become light slate-100 */
+html.dark .text-slate-700:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-gray-700:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-zinc-700:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-neutral-700:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *) {
+  color: #f1f5f9 !important;
+}
+
+/* Body / label text: slate-600 becomes slate-300 */
+html.dark .text-slate-600:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-gray-600:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-zinc-600:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-neutral-600:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *) {
+  color: #cbd5e1 !important;
+}
+
+/* Muted / timestamp text: slate-500 becomes slate-400 */
+html.dark .text-slate-500:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-gray-500:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-zinc-500:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *),
+html.dark .text-neutral-500:not(.btn-primary):not(.btn-teal):not(.avatar):not(.badge):not(.badge *) {
+  color: #94a3b8 !important;
+}
+
+/* Dark green/teal links, labels, and accents become luminous teal-300 in dark mode */
+html.dark .text-teal-950,
+html.dark .text-teal-900,
+html.dark .text-teal-800,
+html.dark .text-teal-700 {
+  color: #2dd4bf !important;
+}
+html.dark .text-emerald-950,
+html.dark .text-emerald-900,
+html.dark .text-emerald-800,
+html.dark .text-emerald-700 {
+  color: #34d399 !important;
+}
+html.dark .text-cyan-900,
+html.dark .text-cyan-800,
+html.dark .text-cyan-700 {
+  color: #38bdf8 !important;
+}
+html.dark .text-blue-900,
+html.dark .text-blue-800,
+html.dark .text-blue-700 {
+  color: #60a5fa !important;
+}
+
+/* ------------------------------------------------------------
+   SURFACE CONTAINERS & BACKGROUND OVERRIDES IN DARK MODE
+   ------------------------------------------------------------ */
+html.dark .bg-white:not(canvas):not(img):not(.allow-white) {
+  background-color: #0f172a !important;
+}
+html.dark .border-slate-200,
+html.dark .border-slate-100 {
+  border-color: #1e293b !important;
+}
+html.dark .border-slate-300 {
+  border-color: #334155 !important;
+}
+html.dark .bg-slate-50 {
+  background-color: #1e293b !important;
+}
+html.dark .bg-slate-100:not(.badge):not(.avatar) {
+  background-color: #1e293b !important;
+}
+html.dark .bg-teal-50:not(.badge):not(.avatar) {
+  background-color: rgba(4, 47, 46, 0.45) !important;
+  border-color: rgba(17, 94, 89, 0.5) !important;
+}
+html.dark .bg-teal-50\/20,
+html.dark .bg-teal-50\/50,
+html.dark .bg-teal-50\/70 {
+  background-color: rgba(4, 47, 46, 0.25) !important;
+}
+html.dark .border-teal-100,
+html.dark .border-teal-200 {
+  border-color: rgba(17, 94, 89, 0.5) !important;
+}
+
+/* ------------------------------------------------------------
+   BUTTONS IN DARK MODE
+   ------------------------------------------------------------ */
+html.dark .btn-primary,
+html.dark .btn-teal,
+html.dark button.bg-teal-400,
+html.dark button.bg-teal-500 {
+  color: #020617 !important;
+  font-weight: 800 !important;
+}
+html.dark .btn-primary *,
+html.dark .btn-teal *,
+html.dark button.bg-teal-400 *,
+html.dark button.bg-teal-500 * {
+  color: #020617 !important;
+}
+html.dark .btn-secondary {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+html.dark .btn-secondary:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* ------------------------------------------------------------
+   FORM CONTROLS IN DARK MODE
+   ------------------------------------------------------------ */
+html.dark input:not([type="checkbox"]):not([type="radio"]),
+html.dark textarea,
+html.dark select {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #ffffff !important;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
+html.dark select option {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+/* ------------------------------------------------------------
+   BADGES & STATUS PILLS IN DARK MODE
+   ------------------------------------------------------------ */
+html.dark .badge.bg-amber-50,
+html.dark .badge.bg-yellow-50 {
+  background-color: rgba(245, 158, 11, 0.16) !important;
+  color: #fbbf24 !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+html.dark .badge.bg-teal-50 {
+  background-color: rgba(20, 184, 166, 0.16) !important;
+  color: #2dd4bf !important;
+  border-color: rgba(20, 184, 166, 0.3) !important;
+}
+html.dark .badge.bg-red-50,
+html.dark .badge.bg-rose-50 {
+  background-color: rgba(239, 68, 68, 0.16) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+html.dark .badge.bg-green-50,
+html.dark .badge.bg-emerald-50 {
+  background-color: rgba(34, 197, 94, 0.16) !important;
+  color: #4ade80 !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+}
+html.dark .badge.bg-blue-50,
+html.dark .badge.bg-sky-50 {
+  background-color: rgba(59, 130, 246, 0.16) !important;
+  color: #60a5fa !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+html.dark .badge.bg-slate-50,
+html.dark .badge.bg-slate-100,
+html.dark .badge.bg-gray-100 {
+  background-color: rgba(148, 163, 184, 0.16) !important;
+  color: #cbd5e1 !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+}
+
+/* ------------------------------------------------------------
+   MODALS IN DARK MODE
+   ------------------------------------------------------------ */
+html.dark .fixed.inset-0 .bg-white {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+@layer components {
+  .surface-card { @apply rounded-[24px] border p-5 sm:p-6 transition-colors duration-200; }
+  .glass-card { @apply rounded-[24px] border border-white/10 bg-white/10 backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-800/40; }
+  .nav-item { @apply relative flex items-center gap-3 rounded-2xl px-3.5 py-3 text-[13px] font-semibold transition; }
+  .nav-item-active { @apply shadow-sm; }
+  .brand-mark { @apply flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-teal-300 shadow-lg dark:bg-teal-950 dark:text-teal-300 dark:border dark:border-teal-800/50; }
+  .avatar { @apply flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-sm font-extrabold text-teal-800 ring-4 ring-teal-50 dark:bg-teal-950 dark:text-teal-300 dark:ring-teal-900/50; }
+  .input { @apply w-full rounded-2xl border px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 dark:placeholder:text-slate-500 dark:focus:border-teal-400; }
+  .btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 dark:bg-teal-500 dark:text-slate-950 dark:hover:bg-teal-400; }
+  .btn-secondary { @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700; }
+  .btn-teal { @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-teal-500 px-4 py-3 text-sm font-bold text-slate-950 shadow-sm transition hover:-translate-y-0.5 hover:bg-teal-400 dark:bg-teal-400 dark:text-slate-950 dark:hover:bg-teal-300; }
+  .badge { @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold; }
+  .section-kicker { @apply text-[11px] font-extrabold uppercase tracking-[.18em] text-teal-700 dark:text-teal-400; }
+  .metric-card { @apply rounded-2xl border p-4 transition-colors; }
+  .soft-row { @apply rounded-2xl border p-4 transition hover:border-teal-100 hover:shadow-sm dark:hover:border-teal-800/60; }
+}
+.label { @apply mb-1.5 block text-xs font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400; }

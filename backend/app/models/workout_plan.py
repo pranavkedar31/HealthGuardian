@@ -1,0 +1,22 @@
+import uuid
+from typing import Optional
+
+from sqlalchemy import JSON, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.db.types import GUID
+
+from app.db.base_class import Base, TimestampMixin, UUIDMixin
+
+
+class WorkoutPlan(UUIDMixin, TimestampMixin, Base):
+    __tablename__ = "workout_plans"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    goal: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    difficulty: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    days_per_week: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    schedule: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+
+    user: Mapped["User"] = relationship(back_populates="workout_plans")

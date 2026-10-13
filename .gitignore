@@ -1,0 +1,28 @@
+# Environment variables and secrets
+
+.env
+.env.*
+!.env.example
+
+# Python
+
+**pycache**/
+*.py[cod]
+*.db
+.venv/
+venv/
+
+# Frontend
+
+node_modules/
+dist/
+
+# Logs
+
+*.log
+*.err
+
+# Local uploads and private data
+
+backend/uploads/*
+!backend/uploads/.gitkeep

@@ -1,0 +1,3201 @@
+<USER_REQUEST>
+HEALTHGUARDIAN — COMPLETE REMINDER SYSTEM FIX
+================================================
+
+I need you to completely inspect, debug, repair, and test the Reminder / Medication Reminder system in the existing HealthGuardian Patient Dashboard.
+
+IMPORTANT:
+This is an EXISTING project.
+
+Do NOT create a fake/mock reminder system.
+Do NOT hardcode success messages.
+Do NOT simply hide the current errors.
+Do NOT remove WhatsApp functionality just because it is currently failing.
+Do NOT claim "Cloud API Active" unless the backend has actually verified the WhatsApp configuration.
+
+The current UI shows:
+
+"Unable to create reminder."
+
+and when WhatsApp is selected:
+
+"Unable to send WhatsApp message. Please verify your phone number format (e.g. +91XXXXXXXXXX) or check WhatsApp Cloud API credentials."
+
+The reminder system must be made actually WORKING end-to-end.
+
+================================================
+1. FIRST INSPECT THE EXISTING IMPLEMENTATION
+================================================
+
+Before modifying code, inspect the entire existing reminder implementation.
+
+Find:
+
+FRONTEND:
+- Reminder page
+- Add reminder form
+- Medicine/reminder fields
+- Time picker
+- Frequency selector
+- Notification method
+- WhatsApp phone number field
+- Add Reminder button
+- Send Test WhatsApp Message button
+- Reminder list
+- Notification/alarm UI
+- Browser notification implementation
+
+BACKEND:
+- reminder API
+- reminder database model
+- reminder routes
+- authentication
+- WhatsApp service
+- WhatsApp Cloud API integration
+- scheduler/cron/background worker
+- notification service
+- environment variables
+- error handling
+
+DATABASE:
+- reminders table/model
+- user/patient relationship
+- reminder status
+- scheduled time
+- frequency
+- notification method
+- WhatsApp number
+- created_at
+- updated_at
+
+Search the complete project for:
+
+reminder
+Reminder
+medication
+medicine
+notification
+whatsapp
+WhatsApp
+cloud api
+META
+WHATSAPP_TOKEN
+PHONE_NUMBER_ID
+WEBHOOK
+cron
+scheduler
+node-cron
+APScheduler
+background
+notification
+alarm
+browser notification
+
+================================================
+2. FIND THE REAL CAUSE OF "UNABLE TO CREATE REMINDER"
+================================================
+
+Do NOT assume the problem.
+
+Trace the complete request:
+
+Add Reminder button
+        ↓
+Frontend validation
+        ↓
+POST reminder API
+        ↓
+Authentication
+        ↓
+Backend validation
+        ↓
+Database insertion
+        ↓
+Response
+        ↓
+Frontend update
+
+Use browser Network tab and backend logs to identify:
+
+- HTTP status
+- request body
+- response body
+- backend exception
+- database error
+- authentication error
+- validation error
+- date/time parsing error
+- timezone error
+
+Fix the ROOT CAUSE.
+
+Do not replace the error with a fake success.
+
+================================================
+3. REMINDER DATABASE
+================================================
+
+Verify that the database actually contains the required reminder fields.
+
+A reminder should support at minimum:
+
+id
+patient_id/user_id
+title
+medicine_name
+dosage
+note
+reminder_time
+frequency
+notification_method
+whatsapp_number
+enabled
+next_trigger_at
+last_triggered_at
+created_at
+updated_at
+
+Adapt this to the existing database architecture.
+
+Do NOT create duplicate tables if a reminder table already exists.
+
+================================================
+4. ADD REMINDER MUST ACTUALLY SAVE
+================================================
+
+When the user enters:
+
+Medicine:
+Paracetamol
+
+Dosage:
+1 tablet
+
+Time:
+11:25 AM
+
+Frequency:
+Daily
+
+Notification:
+WhatsApp
+
+Phone:
++919922248081
+
+and clicks:
+
+Add reminder
+
+the system must:
+
+1. Validate input.
+2. Normalize phone number.
+3. Convert the selected local time correctly.
+4. Save the reminder to the database.
+5. Calculate next_trigger_at.
+6. Return the saved reminder.
+7. Display it immediately in the UI.
+8. Schedule it for the next occurrence.
+9. Confirm success.
+
+Example success:
+
+"Reminder created successfully. Next reminder: Today at 11:25 AM."
+
+Do NOT show success unless database insertion succeeded.
+
+================================================
+5. PHONE NUMBER NORMALIZATION
+================================================
+
+The current screenshot shows:
+
+9922248081
+
+This is an Indian 10-digit mobile number.
+
+The WhatsApp Cloud API integration should internally normalize it to the correct international format.
+
+For India:
+
+9922248081
+
+should become:
+
++919922248081
+
+and when required by the API, use the API's expected normalized recipient format.
+
+Do NOT blindly add +91 to a number that already contains +91.
+
+Support:
+
+9922248081
++919922248081
+91992248081
+91 99222 48081
++91 99222 48081
+
+Normalize safely.
+
+Reject invalid numbers.
+
+Do not display misleading "Cloud API Active" status if the phone number is invalid.
+
+================================================
+6. WHATSAPP CONFIGURATION
+================================================
+
+Inspect the existing WhatsApp Cloud API implementation.
+
+Identify:
+
+WHATSAPP_ACCESS_TOKEN
+WHATSAPP_PHONE_NUMBER_ID
+WHATSAPP_BUSINESS_ACCOUNT_ID if required
+WHATSAPP_API_VERSION
+WHATSAPP_VERIFY_TOKEN if webhooks are implemented
+
+Check:
+
+- .env loading
+- variable names
+- backend access
+- token validity
+- Phone Number ID
+- API endpoint
+- request headers
+- request JSON
+- recipient number
+- response parsing
+
+NEVER expose the WhatsApp access token to the frontend.
+
+NEVER put the token inside React/Vite client code.
+
+================================================
+7. WHATSAPP HEALTH CHECK
+================================================
+
+Create a backend-only WhatsApp configuration/health check.
+
+Conceptually:
+
+GET /api/whatsapp/health
+
+Return something like:
+
+{
+  "configured": true,
+  "credentials_present": true,
+  "phone_number_id_configured": true,
+  "api_reachable": true
+}
+
+Do NOT return:
+
+- access token
+- secret
+- private credentials
+
+If credentials are missing:
+
+configured = false
+
+Do not falsely show:
+
+"Cloud API Active"
+
+================================================
+8. TEST WHATSAPP BUTTON
+================================================
+
+Fix:
+
+"Send Test WhatsApp Message"
+
+When clicked:
+
+1. Validate phone number.
+2. Normalize number.
+3. Validate WhatsApp configuration.
+4. Send a real WhatsApp message through the backend.
+5. Inspect actual API response.
+6. Return success/failure.
+
+Success:
+
+"Test WhatsApp message sent successfully."
+
+Failure:
+
+Display the REAL useful reason without exposing secrets.
+
+Examples:
+
+- Invalid phone number
+- Missing credentials
+- Invalid access token
+- Invalid Phone Number ID
+- WhatsApp API rejected recipient
+- Template required
+- Rate limit
+- Network failure
+
+Do NOT always return:
+
+"Please verify your phone number."
+
+That hides the actual error.
+
+================================================
+9. WHATSAPP API ERROR LOGGING
+================================================
+
+Backend logs should contain:
+
+[WhatsApp]
+Request started
+Recipient normalized: **********
+Phone Number ID configured: YES
+API request: SENT
+API response status: XXX
+API response error code: XXX
+API response message: XXX
+
+NEVER log:
+
+WhatsApp access tokens
+patient medical information
+passwords
+JWTs
+database credentials
+
+================================================
+10. MEDICATION REMINDER WORKFLOW
+================================================
+
+The final workflow must be:
+
+User creates reminder
+        ↓
+Database
+        ↓
+Scheduler
+        ↓
+Wait until scheduled time
+        ↓
+Trigger notification
+        ↓
+WhatsApp message
+        +
+Browser/device alarm
+        ↓
+Patient takes medicine
+        ↓
+Patient can mark as completed
+
+================================================
+11. EXACT TIME REQUIREMENT
+================================================
+
+If user selects:
+
+11:25 AM
+
+the reminder must trigger at:
+
+11:25 AM
+
+NOT:
+
+11:24
+11:26
+11:25 UTC when user expects local time
+
+Use a clear timezone strategy.
+
+HealthGuardian should use the patient's configured timezone.
+
+For India:
+
+Asia/Kolkata
+
+Do not rely blindly on the server's timezone.
+
+Store timestamps consistently and convert them correctly for display and scheduling.
+
+================================================
+12. DAILY REMINDER
+================================================
+
+If:
+
+Time = 11:25 AM
+Frequency = Daily
+
+then the system should trigger:
+
+Today 11:25 AM
+Tomorrow 11:25 AM
+Next day 11:25 AM
+...
+
+until the reminder is disabled/deleted.
+
+Do NOT create thousands of future database records.
+
+Store the recurrence rule and calculate:
+
+next_trigger_at
+
+after each execution.
+
+================================================
+13. OTHER FREQUENCIES
+================================================
+
+Support the existing frequency options properly.
+
+For example:
+
+Once
+Daily
+Weekly
+Monthly
+
+If the UI already contains additional frequency options, preserve them and implement them correctly.
+
+Do not show a frequency option that the backend cannot execute.
+
+================================================
+14. SCHEDULER
+================================================
+
+Inspect the existing scheduler.
+
+If one already exists:
+
+FIX IT.
+
+Do not create a duplicate scheduler.
+
+The scheduler must:
+
+1. Load enabled reminders.
+2. Find reminders whose next_trigger_at is due.
+3. Trigger notification.
+4. Record last_triggered_at.
+5. Calculate next_trigger_at.
+6. Continue running.
+
+Use the technology already present in the project where possible.
+
+For example:
+
+Node.js:
+node-cron / worker / scheduler
+
+Python:
+APScheduler / background worker
+
+Use the architecture already used by HealthGuardian.
+
+================================================
+15. SERVER RESTART SAFETY
+================================================
+
+VERY IMPORTANT.
+
+If the server restarts:
+
+reminders must NOT disappear.
+
+The scheduler must reload enabled reminders from the database.
+
+Example:
+
+Server running
+ ↓
+Reminder at 11:25
+ ↓
+Server restarts at 11:20
+ ↓
+Server starts again
+ ↓
+Loads reminder from DB
+ ↓
+Schedules next trigger correctly
+
+Do not rely only on setTimeout() created in memory.
+
+================================================
+16. WHATSAPP MESSAGE AT REMINDER TIME
+================================================
+
+If reminder is:
+
+Medicine:
+Paracetamol
+
+Dosage:
+1 tablet
+
+Time:
+11:25 AM
+
+Frequency:
+Daily
+
+At 11:25 AM, send a WhatsApp message such as:
+
+"HealthGuardian Reminder 💊
+
+It's time to take your scheduled medicine.
+
+Medicine: Paracetamol
+Dosage: 1 tablet
+
+Please follow the instructions provided by your healthcare professional.
+
+— HealthGuardian"
+
+Do not provide medical dosage recommendations that were not entered by the user/clinician.
+
+The reminder system only sends the stored reminder information.
+
+================================================
+17. OTHER REMINDERS
+================================================
+
+The same system should work for:
+
+Medicine
+Water
+Exercise
+Appointment
+Health check
+Meditation
+Other preventive-care reminders
+
+Example:
+
+Title:
+Drink Water
+
+Time:
+2:00 PM
+
+Notification:
+WhatsApp + Alarm
+
+At 2:00 PM:
+
+"HealthGuardian Reminder 💧
+
+It's time for your scheduled reminder:
+
+Drink Water
+
+— HealthGuardian"
+
+================================================
+18. ALARM / BEEP
+================================================
+
+The browser/device should also provide a local alarm at the scheduled time.
+
+IMPORTANT:
+
+A normal browser cannot guarantee an alarm if:
+
+- the browser is completely closed
+- the operating system suspends the browser
+- the computer is asleep
+- browser notification permissions are denied
+
+Therefore implement the strongest reliable browser notification/alarm possible.
+
+When the web application is active:
+
+At 11:25 AM:
+
+- play an alarm/beep
+- show notification
+- show reminder modal/banner
+- optionally repeat the sound until dismissed
+- provide:
+  "Mark as Taken"
+  "Snooze"
+  "Dismiss"
+
+Do not require the user to keep the reminder page manually open if the current architecture supports background notifications/service workers.
+
+================================================
+19. BROWSER NOTIFICATION
+================================================
+
+Request Notification permission properly.
+
+If permission is denied:
+
+show:
+
+"Browser notifications are disabled. Enable notifications in your browser settings to receive local reminder alerts."
+
+Do not silently fail.
+
+================================================
+20. AUDIO ALARM
+================================================
+
+Implement a proper alarm mechanism.
+
+At trigger:
+
+play notification sound.
+
+Provide:
+
+Snooze
+Dismiss
+Mark as Taken
+
+Do not start audio unexpectedly on page load.
+
+Respect browser autoplay restrictions.
+
+If the browser requires a previous user interaction to enable audio, clearly explain it to the user.
+
+================================================
+21. SERVICE WORKER / BACKGROUND NOTIFICATION
+================================================
+
+Inspect whether HealthGuardian already has:
+
+service worker
+PWA
+Push notification system
+
+If yes:
+
+integrate reminders into the existing infrastructure.
+
+If not:
+
+implement a service worker only if it fits the current architecture.
+
+Do NOT add unnecessary dependencies.
+
+IMPORTANT:
+
+A service worker/browser notification still cannot guarantee an audible alarm in every operating-system state.
+
+The UI should clearly distinguish:
+
+WhatsApp notification
+Browser notification
+Local alarm
+
+================================================
+22. WHATSAPP + ALARM MUST BOTH WORK
+================================================
+
+For a reminder configured as:
+
+Notification Method:
+WhatsApp
+
+the system should still support the local browser alarm if the application/browser environment permits it.
+
+At trigger:
+
+             Reminder
+                 ↓
+        ┌────────┴────────┐
+        ↓                 ↓
+     WhatsApp         Local Alert
+        ↓                 ↓
+   Message sent        Beep
+                          ↓
+                     Notification
+                          ↓
+                  Mark as Taken
+If WhatsApp fails:
+
+LOCAL ALARM MUST STILL WORK.
+
+If local browser notification fails:
+
+WhatsApp should still be attempted.
+
+One notification channel must not prevent the others from executing.
+
+================================================
+23. FAILURE INDEPENDENCE
+
+This is critical.
+
+Example:
+
+WhatsApp API:
+FAILED
+
+Browser alarm:
+SUCCESS
+
+The reminder must still alert the user.
+
+Another example:
+
+Browser notification:
+FAILED
+
+WhatsApp:
+SUCCESS
+
+The WhatsApp reminder must still be sent.
+
+Another example:
+
+Both fail:
+
+show an appropriate system status/error.
+
+Do not mark the reminder as successfully delivered if delivery failed.
+
+================================================
+24. DELIVERY STATUS
+
+Track notification status.
+
+For example:
+
+PENDING
+SENT
+FAILED
+DELIVERED if actual delivery confirmation is available
+READ if actual provider confirmation is available
+
+Do not claim "Delivered" merely because the API request was accepted.
+
+Differentiate:
+
+API accepted message
+vs
+actual WhatsApp delivery confirmation.
+
+================================================
+25. REMINDER HISTORY
+
+Create/display reminder history if the existing UI supports it.
+
+Example:
+
+Medicine
+11:25 AM
+WhatsApp: Sent
+Alarm: Triggered
+Status: Completed
+
+This helps debugging.
+
+================================================
+26. MARK AS TAKEN
+
+When user clicks:
+
+Mark as Taken
+
+record:
+
+completed_at
+
+and reminder occurrence status.
+
+Do not disable a Daily reminder permanently.
+
+Only mark the CURRENT occurrence as completed.
+
+The next day's reminder should remain scheduled.
+
+================================================
+27. SNOOZE
+
+If supported by the existing UI, implement:
+
+Snooze 5 minutes
+Snooze 10 minutes
+Snooze 15 minutes
+
+The snooze should create a temporary next trigger without destroying the original recurring schedule.
+
+================================================
+28. TIMEZONE TESTING
+
+Test:
+
+11:25 AM
+
+with timezone:
+
+Asia/Kolkata
+
+Verify that the trigger actually occurs at the expected local time.
+
+Do not use the browser/server timezone accidentally.
+
+================================================
+29. AUTHENTICATION
+
+Every reminder must belong to the authenticated patient.
+
+Patient A:
+
+cannot view Patient B reminders.
+
+Patient A:
+
+cannot modify Patient B reminders.
+
+Patient A:
+
+cannot trigger WhatsApp messages using Patient B's reminder.
+
+================================================
+30. SECURITY
+
+Validate:
+
+patient ID
+reminder ID
+authorization
+phone number
+reminder data
+
+Protect against:
+
+SQL injection
+unauthorized reminder access
+unauthorized WhatsApp sending
+token exposure
+
+Never expose:
+
+WhatsApp access token
+API secrets
+database credentials
+
+================================================
+31. UI FIX
+
+Preserve the existing HealthGuardian design.
+
+Do NOT redesign the entire application.
+
+Fix:
+
+Add reminder
+Test WhatsApp
+error messages
+loading states
+success states
+reminder list
+notification status
+
+The current red error:
+
+"Unable to create reminder."
+
+must be replaced with a useful error ONLY when an actual error occurs.
+
+For example:
+
+"Unable to create reminder: database request failed."
+
+or:
+
+"Unable to create reminder: invalid reminder time."
+
+Do not show generic errors when a specific reason is available.
+
+================================================
+32. BUTTON STATES
+
+Add Reminder:
+
+Normal:
+"Add reminder"
+
+During request:
+"Saving..."
+
+Success:
+"Reminder added"
+
+Failure:
+"Try again"
+
+Send Test WhatsApp:
+
+Normal:
+"Send Test WhatsApp Message"
+
+During request:
+"Sending..."
+
+Success:
+"WhatsApp message sent ✓"
+
+Failure:
+"Send failed"
+
+Do not allow duplicate submissions while a request is already running.
+
+================================================
+33. VALIDATION
+
+Validate:
+
+Medicine/title required
+Time required
+Frequency required
+Notification method required
+Phone required if WhatsApp selected
+
+For WhatsApp:
+
+validate international phone number.
+
+Show the user exactly what needs fixing.
+
+================================================
+34. REMINDER TEST MODE
+
+Add a development-only test option if useful:
+
+"Trigger Test Reminder"
+
+It should trigger the entire pipeline immediately:
+
+Database
+↓
+Scheduler
+↓
+WhatsApp
+↓
+Browser notification
+↓
+Alarm
+
+This makes it possible to verify the system without waiting until 11:25.
+
+IMPORTANT:
+
+Test mode must not remain exposed as an unsafe production feature.
+
+================================================
+35. AUTOMATED TESTS
+
+Test:
+
+Create reminder
+Read reminder
+Update reminder
+Delete reminder
+Daily recurrence
+Weekly recurrence
+Timezone
+WhatsApp number normalization
+WhatsApp test message
+WhatsApp API failure
+Browser notification
+Alarm
+Mark as Taken
+Snooze
+Server restart
+Patient authorization
+Invalid reminder
+Missing WhatsApp credentials
+Duplicate reminder submission
+Multiple reminders at same time
+================================================
+36. END-TO-END TEST
+
+Perform this exact test:
+
+Create:
+
+Medicine:
+Test Medicine
+
+Dosage:
+1 tablet
+
+Time:
+5 minutes from current time
+
+Frequency:
+Once
+
+Notification:
+WhatsApp + Browser Alarm
+
+Phone:
++919922248081
+
+Then verify:
+
+POST request succeeds.
+Database contains reminder.
+next_trigger_at is correct.
+Scheduler sees reminder.
+At trigger time:
+WhatsApp API is called.
+browser notification appears.
+alarm attempts to play.
+Delivery status is recorded.
+User can mark it as taken.
+
+Then test:
+
+WhatsApp API disabled
+→ reminder still triggers local alarm.
+
+Then:
+
+Browser notifications disabled
+→ WhatsApp still works.
+
+Then:
+
+Both unavailable
+→ clear failure status.
+
+================================================
+37. IMPORTANT WHATSAPP TEMPLATE RULE
+
+Inspect the current WhatsApp Cloud API implementation and determine whether the message being sent requires a WhatsApp-approved template depending on the conversation/message context.
+
+Do not assume that arbitrary free-form messages can always be sent.
+
+If a template is required:
+
+implement the configured approved template
+use the correct template name
+use the correct language code
+pass variables correctly
+
+Do not fake successful delivery.
+
+================================================
+38. DATABASE + API CONSISTENCY
+
+Ensure the frontend model and backend model use the same field names.
+
+For example, do not have:
+
+Frontend:
+reminderTime
+
+Backend:
+reminder_time
+
+without proper mapping.
+
+Check:
+
+camelCase
+snake_case
+date serialization
+time serialization
+boolean values
+frequency values
+
+================================================
+39. NO MOCK DATA
+
+Remove or isolate fake reminder data if it is being used.
+
+The dashboard must display actual database records.
+
+Do not display:
+
+"Cloud API Active"
+
+unless the backend has verified the configuration.
+
+Do not display:
+
+"Message sent"
+
+unless the API request actually succeeded.
+
+================================================
+40. FINAL ARCHITECTURE
+
+The final system should work like this:
+
+                PATIENT
+                   ↓
+            Add Reminder
+                   ↓
+            Input Validation
+                   ↓
+            POST /reminders
+                   ↓
+               DATABASE
+                   ↓
+            next_trigger_at
+                   ↓
+               SCHEDULER
+                   ↓
+              Trigger Time
+                   ↓
+         ┌─────────┴─────────┐
+         ↓                   ↓
+    WhatsApp API        Local Browser
+         ↓                   ↓
+    WhatsApp Message     Notification
+                             ↓
+                          Alarm
+                             ↓
+                     Mark as Taken
+         ↓                   ↓
+         └─────────┬─────────┘
+                   ↓
+             Reminder History
+================================================
+41. FINAL REPORT REQUIRED
+
+After implementation, provide:
+
+Exact root cause of "Unable to create reminder"
+Exact root cause of WhatsApp failure
+Database changes
+Backend changes
+Frontend changes
+Scheduler changes
+WhatsApp integration changes
+Phone-number normalization
+Timezone implementation
+Browser notification implementation
+Alarm implementation
+Delivery-status implementation
+Files modified
+APIs created/modified
+Environment variables required
+Tests performed
+Test results
+Any limitations
+
+MOST IMPORTANT:
+
+Actually run the application.
+
+Do NOT tell me:
+
+"Reminder system fixed"
+
+until you have actually tested:
+
+Add Reminder
+→ Database
+→ Scheduler
+→ Trigger
+→ WhatsApp
+→ Browser notification
+→ Alarm
+→ Mark as Taken
+
+Also test the failure cases.
+
+The system must remain in a WORKABLE CONDITION after the changes.
+
+Do not break the existing Patient Dashboard, Doctor Dashboard, authentication, Health Records, AI Chatbot, or other HealthGuardian modules while fixing reminders.
+
+### One important thing about your WhatsApp requirement
+
+For your example:
+
+**11:25 AM → WhatsApp message + alarm**
+
+there are actually **two notification systems** that need to work independently:
+
+**WhatsApp**
+> At 11:25 → backend scheduler → WhatsApp Cloud API → patient's WhatsApp.
+
+**Local alarm**
+> At 11:25 → browser/service-worker notification → audible alert where the browser/OS permits it.
+
+Don't tell Antigravity to make the **WhatsApp message itself beep**—WhatsApp controls its own notification sound on the user's device. HealthGuardian can send the WhatsApp message, while the web app can provide its own local alarm.
+
+Also, your screenshot shows the phone number as `9922248081`. Make Antigravity normalize it to the appropriate international format (for India, `+919922248081`) **before sending**, rather than requiring the user to manually enter the prefix.
+
+And critically, **WhatsApp Cloud API credentials should stay entirely on the backend**. The frontend should only call something like `POST /api/reminders/...`; it should never contain the WhatsApp access token.
+HEALTHGUARDIAN — COMPLETE PATIENT & DOCTOR AUTHENTICATION, REGISTRATION, DOCTOR VERIFICATION AND PROFILE SYSTEM
+
+You are working on my existing HealthGuardian healthcare project.
+
+IMPORTANT:
+Do NOT rewrite the entire project from scratch.
+Do NOT remove existing functionality.
+Do NOT replace working modules unnecessarily.
+
+First inspect the complete existing project structure, frontend, backend, database, authentication, routes, APIs, doctor dashboard, patient dashboard, doctor profile, appointment system and existing user/doctor records.
+
+Then implement the following requirements cleanly inside the existing architecture.
+
+The goal is to create a professional, secure, fully functional authentication and registration system with completely separate Patient and Doctor flows.
+
+============================================================
+1. MAIN AUTHENTICATION ROLE SELECTION
+============================================================
+
+Create/update the main authentication entry page so that users first see exactly TWO clear options:
+
+                    HEALTHGUARDIAN
+
+              How would you like to continue?
+
+        [ 👤 PATIENT ]       [ 🩺 DOCTOR ]
+
+Patient button:
+→ /patient/login
+
+Doctor button:
+→ /doctor/login
+
+The two roles must have completely separate login and registration pages.
+
+Do NOT create one generic registration form with a dropdown such as:
+"I am Patient / I am Doctor"
+
+Instead use separate flows.
+
+Patient:
+    /patient/login
+    /patient/register
+    /patient/dashboard
+
+Doctor:
+    /doctor/login
+    /doctor/register
+    /doctor/dashboard
+
+
+============================================================
+2. PATIENT LOGIN
+============================================================
+
+Create a dedicated Patient Login page.
+
+Route:
+
+/patient/login
+
+UI:
+
+HEALTHGUARDIAN
+
+Patient Login
+
+Email / Username
+[________________________]
+
+Password
+[________________________]
+
+[ Login as Patient ]
+
+Forgot Password?
+
+New Patient?
+[ Create Patient Account ]
+
+After successful login:
+
+→ /patient/dashboard
+
+The backend must authenticate the user as:
+
+role = patient
+
+A doctor account must not be able to use the Patient Dashboard.
+
+
+============================================================
+3. PATIENT REGISTRATION
+============================================================
+
+Create a dedicated Patient Registration page.
+
+Route:
+
+/patient/register
+
+Collect appropriate patient information.
+
+PERSONAL INFORMATION:
+
+- Full Name
+- Date of Birth
+- Gender
+- Phone Number
+- Email Address
+
+ACCOUNT INFORMATION:
+
+- Username
+- Password
+- Confirm Password
+
+ADDRESS:
+
+- Address
+- City
+- State
+- Pincode
+
+EMERGENCY CONTACT:
+
+- Emergency Contact Name
+- Emergency Contact Phone
+- Relationship
+
+OPTIONAL HEALTH PROFILE:
+
+If the existing HealthGuardian architecture supports these fields, allow:
+
+- Blood Group
+- Known Allergies
+- Existing Medical Conditions
+- Current Medications
+
+Do not force unnecessary medical information if it is not required by the existing architecture.
+
+Final button:
+
+[ Create Patient Account ]
+
+After successful registration:
+
+Patient Account Created Successfully
+
+[ Continue to Patient Login ]
+
+The patient registration must NOT contain the Doctor Verification Code.
+
+============================================================
+4. DOCTOR LOGIN
+============================================================
+
+Create a completely separate Doctor Login page.
+
+Route:
+
+/doctor/login
+
+UI:
+
+HEALTHGUARDIAN
+
+Doctor Login
+
+Email / Username
+[________________________]
+
+Password
+[________________________]
+
+[ Login as Doctor ]
+
+Forgot Password?
+
+New Doctor?
+[ Register as Doctor ]
+
+After successful login:
+
+→ /doctor/dashboard
+
+The backend must authenticate the user as:
+
+role = doctor
+
+A patient must not be able to access the Doctor Dashboard.
+
+
+============================================================
+5. DOCTOR REGISTRATION
+============================================================
+
+Create a completely separate and professional Doctor Registration page.
+
+Route:
+
+/doctor/register
+
+This must NOT be a simple name/email/password form.
+
+It must collect complete professional information.
+
+Make the registration a multi-step wizard.
+
+STEP 1:
+Account Information
+
+STEP 2:
+Professional Information
+
+STEP 3:
+Hospital / Clinic Information
+
+STEP 4:
+Consultation & Availability
+
+STEP 5:
+Doctor Verification + Review + Submit
+
+
+============================================================
+6. DOCTOR REGISTRATION — STEP 1 ACCOUNT INFORMATION
+============================================================
+
+Fields:
+
+- Full Name
+- Email Address
+- Phone Number
+- Username
+- Password
+- Confirm Password
+
+Example:
+
+Full Name:
+Dr. Arvind Deshmukh
+
+Email:
+dr.arvind@example.com
+
+Phone:
++91 9814694942
+
+Username:
+arvind.deshmukh
+
+Password:
+********
+
+Confirm Password:
+********
+
+Validation:
+
+- Valid email
+- Valid phone number
+- Unique email
+- Unique username
+- Password strength
+- Confirm password must match
+
+Never store passwords in plain text.
+
+Use the existing secure password hashing mechanism.
+
+If the project does not already have secure hashing, use a proper password hashing mechanism such as bcrypt or Argon2.
+
+
+============================================================
+7. DOCTOR REGISTRATION — STEP 2 PROFESSIONAL INFORMATION
+============================================================
+
+Create a Professional Information section.
+
+Fields:
+
+- Doctor Full Name
+- Specialization
+- Qualification
+- Years of Experience
+- Medical Registration Number
+- Medical Registration Council
+- Professional Bio
+
+Example:
+
+Specialization:
+General Physician
+
+Qualification:
+MBBS, MD
+
+Experience:
+14 years
+
+Medical Registration Number:
+[registration number]
+
+Medical Registration Council:
+[Maharashtra Medical Council / appropriate council]
+
+Professional Bio:
+Consultant General Physician practicing at Belokar Hospital.
+Specializes in comprehensive consultations and preventive follow-ups.
+
+IMPORTANT:
+
+Medical Registration Number is a professional identity field.
+
+Store it in the database.
+
+Do not automatically mark a doctor as medically verified merely because they entered a registration number.
+
+
+============================================================
+8. DOCTOR REGISTRATION — STEP 3 HOSPITAL / CLINIC
+============================================================
+
+Create:
+
+Hospital / Clinic Information
+
+Fields:
+
+- Hospital / Clinic Name
+- Clinic Address
+- City
+- Locality
+- State
+- Pincode
+
+Example only:
+
+Hospital / Clinic Name:
+Belokar Hospital
+
+Clinic Address:
+Belokar Hospital, MDR27, Vijay Colony,
+Amravati, Maharashtra, 444606, India
+
+City:
+Amravati
+
+Locality:
+Kathora Bk
+
+State:
+Maharashtra
+
+Pincode:
+444001
+
+DO NOT hardcode these example values.
+
+Every new doctor must enter their own details.
+
+
+============================================================
+9. DOCTOR REGISTRATION — STEP 4 CONSULTATION DETAILS
+============================================================
+
+Create:
+
+Consultation & Availability
+
+Fields:
+
+- Consultation Fee
+- Available Start Time
+- Available End Time
+- Available Days
+
+Example:
+
+Consultation Fee:
+₹600
+
+Start Time:
+09:00
+
+End Time:
+19:00
+
+Available Days:
+
+☑ Monday
+☑ Tuesday
+☑ Wednesday
+☑ Thursday
+☑ Friday
+☑ Saturday
+☐ Sunday
+
+Use proper time inputs.
+
+Do not store time as arbitrary free-form text if the existing backend can use proper time fields.
+
+Validation:
+
+- Fee cannot be negative
+- End time cannot be earlier than start time
+- At least one available day must be selected
+
+
+============================================================
+10. DOCTOR REGISTRATION — STEP 5 VERIFICATION CODE
+============================================================
+
+This is a REQUIRED security step.
+
+Before a new Doctor account can be created, the doctor MUST enter a Doctor Verification Code.
+
+Display:
+
+DOCTOR VERIFICATION
+
+Enter your authorized doctor verification code.
+
+[________________________]
+
+For the current development/test environment, the valid code is:
+
+DOCT2026
+
+The registration must NOT be completed without a valid code.
+
+Correct:
+
+DOCT2026
+→ Continue account creation
+
+Incorrect:
+
+DOCT2025
+doct2026
+DOCTOR2026
+123456
+empty
+anything else
+
+→ Reject registration
+
+
+============================================================
+11. VERY IMPORTANT — BACKEND MUST VALIDATE DOCTOR CODE
+============================================================
+
+DO NOT validate DOCT2026 only in frontend JavaScript/React.
+
+The backend registration API MUST validate the code.
+
+The frontend can perform preliminary validation for user experience, but the backend is the final authority.
+
+Example:
+
+POST /api/auth/doctor/register
+
+Request:
+
+{
+    "full_name": "...",
+    "email": "...",
+    "phone": "...",
+    "username": "...",
+    "password": "...",
+    "specialization": "...",
+    "qualification": "...",
+    "experience_years": 10,
+    "medical_registration_number": "...",
+    "medical_registration_council": "...",
+    "hospital_name": "...",
+    "clinic_address": "...",
+    "city": "...",
+    "locality": "...",
+    "state": "...",
+    "pincode": "...",
+    "consultation_fee": 600,
+    "available_start_time": "09:00",
+    "available_end_time": "19:00",
+    "available_days": [
+        "Monday",
+        "Tuesday"
+    ],
+    "professional_bio": "...",
+    "verification_code": "DOCT2026"
+}
+
+Backend:
+
+IF verification_code is invalid:
+    reject registration
+
+ELSE:
+    create doctor account
+
+
+============================================================
+12. DO NOT EXPOSE VERIFICATION CODE IN FRONTEND
+============================================================
+
+The code:
+
+DOCT2026
+
+must NOT be hardcoded in frontend source code.
+
+Store it in backend environment configuration.
+
+For development:
+
+DOCTOR_REGISTRATION_CODE=DOCT2026
+
+The backend reads the environment variable.
+
+The frontend must never receive the actual secret through a public API.
+
+Make the system configurable so that the code can later be changed without modifying frontend source code.
+
+IMPORTANT:
+
+The Doctor Verification Code only controls permission to create a Doctor account.
+
+It is NOT proof of medical qualification.
+
+Do not automatically set:
+
+verification_status = approved
+
+just because DOCT2026 was entered.
+
+
+============================================================
+13. DOCTOR VERIFICATION STATUS
+============================================================
+
+Maintain a separate professional verification status.
+
+Example:
+
+verification_status:
+
+pending
+approved
+rejected
+
+New doctor registration should normally create:
+
+verification_status = pending
+
+unless the existing HealthGuardian admin verification workflow explicitly approves the account.
+
+The UI must display:
+
+Pending Verification
+
+instead of falsely displaying:
+
+Verified Doctor
+
+until the backend actually marks the doctor as approved/verified.
+
+
+============================================================
+14. DOCTOR REGISTRATION REVIEW PAGE
+============================================================
+
+Before final account creation, show a Review page.
+
+Example:
+
+DOCTOR REGISTRATION REVIEW
+
+ACCOUNT INFORMATION
+-------------------
+Name: Dr. Example
+Email: doctor@example.com
+Phone: +91 XXXXX XXXXX
+
+PROFESSIONAL INFORMATION
+------------------------
+Specialization: General Physician
+Qualification: MBBS, MD
+Experience: 14 years
+Registration Number: XXXXX
+
+HOSPITAL / CLINIC
+-----------------
+Hospital: Example Hospital
+Address: XXXXX
+City: Amravati
+State: Maharashtra
+Pincode: XXXXX
+
+CONSULTATION
+------------
+Fee: ₹600
+Timing: 09:00 - 19:00
+Days: Mon, Tue, Wed, Thu, Fri, Sat
+
+VERIFICATION
+------------
+Doctor Verification Code: ********
+
+Buttons:
+
+[ Edit ]
+[ Create Doctor Account ]
+
+
+============================================================
+15. FINAL DOCTOR ACCOUNT CREATION
+============================================================
+
+The final button must clearly say:
+
+[ Create Doctor Account ]
+
+Do not use an ambiguous button such as:
+
+Submit
+Continue
+Register
+
+When clicked:
+
+1. Validate frontend fields.
+2. Send request to backend.
+3. Backend validates authentication data.
+4. Backend validates Doctor Verification Code.
+5. Backend validates uniqueness.
+6. Backend validates all professional information.
+7. Hash password securely.
+8. Create user/doctor database record.
+9. Set role = doctor.
+10. Set verification_status = pending unless existing verification workflow says otherwise.
+11. Return safe response.
+12. Never return password hash or secret information.
+
+
+============================================================
+16. SUCCESS PAGE
+============================================================
+
+After successful Doctor registration:
+
+DOCTOR ACCOUNT CREATED SUCCESSFULLY
+
+Your HealthGuardian doctor account has been created.
+
+Professional Verification Status:
+Pending
+
+Your account can now be accessed through Doctor Login.
+
+[ Continue to Doctor Login ]
+
+Do not show success if the database insertion fails.
+
+Do not create duplicate accounts when the user double-clicks the button.
+
+Disable the submit button while registration is being processed.
+
+
+============================================================
+17. DOCTOR DATABASE STRUCTURE
+============================================================
+
+First inspect the existing database.
+
+Do NOT blindly create duplicate tables.
+
+Extend existing tables if appropriate.
+
+The doctor record should support fields similar to:
+
+id
+user_id
+full_name
+email
+phone
+username
+password_hash
+role
+specialization
+qualification
+experience_years
+medical_registration_number
+medical_registration_council
+hospital_name
+clinic_address
+city
+locality
+state
+pincode
+consultation_fee
+available_start_time
+available_end_time
+available_days
+professional_bio
+verification_status
+created_at
+updated_at
+
+Use the existing project's naming conventions if they differ.
+
+Do not duplicate authentication records unnecessarily.
+
+
+============================================================
+18. EXISTING DR. ARVIND DESHMUKH ACCOUNT
+============================================================
+
+IMPORTANT:
+
+There is already an existing doctor account/profile:
+
+Dr. Arvind Deshmukh
+
+Current profile information shown in the existing Doctor Dashboard includes:
+
+Specialization:
+General Physician
+
+Qualification:
+MBBS, MD
+
+Experience:
+14 years
+
+Hospital:
+Belokar Hospital
+
+Consultation Fee:
+₹600
+
+Available Timings:
+09:00 - 19:00
+
+Available Days:
+Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+
+Clinic Address:
+Belokar Hospital, MDR27, Vijay Colony,
+Amravati, Maharashtra, 444606, India
+
+City / Locality:
+Kathora Bk
+
+Pincode:
+440001
+
+Contact phone:
++91 9814694942
+
+Professional Bio:
+Consultant General Physician practicing at Belokar Hospital.
+Specializes in comprehensive consultations and preventive follow-ups.
+
+DO NOT delete this existing doctor.
+
+DO NOT replace this information with fake data.
+
+Make sure the new authentication system continues to support this existing account.
+
+
+============================================================
+19. DOCTOR PROFILE MUST BE DATABASE-DRIVEN
+============================================================
+
+The existing Doctor Profile UI currently displays:
+
+Doctor name
+Verified Doctor
+Specialization
+Qualification
+Experience
+Hospital
+Consultation Fee
+Available Timings
+Available Days
+Clinic Address
+City & Locality
+Pincode
+Registered Email
+Contact Phone
+Account Role
+Professional Bio
+
+These values MUST come from the authenticated doctor's database record.
+
+DO NOT hardcode:
+
+Dr. Arvind Deshmukh
+Belokar Hospital
+₹600
+14 years
+09:00 - 19:00
+
+Those are existing database/sample values only.
+
+When a new doctor registers:
+
+New Doctor
+↓
+Doctor Login
+↓
+Doctor Dashboard
+↓
+My Profile
+
+must display the newly registered doctor's own information.
+
+
+============================================================
+20. DOCTOR DASHBOARD
+============================================================
+
+Doctor Dashboard should contain:
+
+- Dashboard
+- Appointments
+- Patients
+- My Profile
+- Practice Details
+- Availability
+- Notifications
+- Settings
+- Logout
+
+The authenticated doctor must only see their own information.
+
+For example:
+
+doctor_id = 25
+
+must never receive:
+
+doctor_id = 26
+
+profile or appointment data.
+
+
+============================================================
+21. PATIENT DASHBOARD
+============================================================
+
+Do not break the existing Patient Dashboard.
+
+Keep existing HealthGuardian modules such as:
+
+- Dashboard
+- AI Chatbot
+- Health Records
+- Health Risk Prediction
+- Reminders
+- Appointments
+- Doctors
+- Profile
+- Settings
+- Logout
+
+The new authentication system must integrate with the existing Patient Dashboard.
+
+
+============================================================
+22. ROLE-BASED AUTHORIZATION
+============================================================
+
+Implement role-based authentication on BOTH frontend and backend.
+
+Roles:
+
+patient
+doctor
+
+Patient:
+
+role = patient
+
+Doctor:
+
+role = doctor
+
+A patient must NOT access:
+
+/doctor/dashboard
+
+A doctor must NOT access:
+
+/patient/dashboard
+
+Do not rely only on frontend route protection.
+
+The backend APIs must also verify the authenticated user's role.
+
+
+============================================================
+23. ROUTING
+============================================================
+
+Implement or update routes:
+
+/
+    role selection
+
+/patient/login
+/patient/register
+/patient/dashboard
+
+/doctor/login
+/doctor/register
+/doctor/dashboard
+
+/doctor/profile
+
+Use the project's existing routing framework and naming conventions where appropriate.
+
+
+============================================================
+24. PROTECTED ROUTES
+============================================================
+
+Unauthenticated user attempting:
+
+/doctor/dashboard
+
+must be redirected to:
+
+/doctor/login
+
+Unauthenticated user attempting:
+
+/patient/dashboard
+
+must be redirected to:
+
+/patient/login
+
+Patient attempting Doctor Dashboard:
+
+→ reject and redirect appropriately.
+
+Doctor attempting Patient Dashboard:
+
+→ reject and redirect appropriately.
+
+Also enforce this on backend API requests.
+
+
+============================================================
+25. AUTHENTICATION SECURITY
+============================================================
+
+Inspect existing authentication implementation.
+
+Ensure:
+
+- Password hashing
+- Secure session/token handling
+- Role-based authorization
+- Protected backend routes
+- Input validation
+- Authentication expiration if supported
+- Secure logout
+- No password hashes in API responses
+- No secrets in frontend code
+- No sensitive database fields exposed
+- Protection against IDOR
+- Backend authorization checks
+
+Do not expose internal errors to users.
+
+
+============================================================
+26. FORM VALIDATION
+============================================================
+
+Doctor registration validation must include:
+
+Email:
+valid email format
+
+Phone:
+valid phone format
+
+Password:
+reasonable password strength
+
+Confirm Password:
+must match
+
+Experience:
+must be zero or positive
+
+Consultation Fee:
+must be zero or positive
+
+Available Days:
+at least one day
+
+Available Time:
+end time cannot be earlier than start time
+
+Medical Registration Number:
+required
+
+Hospital/Clinic Name:
+required
+
+Specialization:
+required
+
+Qualification:
+required
+
+Doctor Verification Code:
+required and must match backend configuration
+
+
+============================================================
+27. ERROR MESSAGES
+============================================================
+
+Do not display only:
+
+Something went wrong.
+
+Use meaningful errors.
+
+Examples:
+
+Email already registered.
+
+Username already registered.
+
+Phone number already registered.
+
+Invalid email format.
+
+Invalid phone number.
+
+Passwords do not match.
+
+Invalid doctor verification code.
+
+Doctor verification code is required.
+
+Medical registration number is required.
+
+Invalid consultation timing.
+
+Please select at least one available day.
+
+Unable to create doctor account.
+
+Database connection failed.
+
+Doctor account is pending verification.
+
+Invalid credentials.
+
+
+============================================================
+28. DATABASE DUPLICATE PROTECTION
+============================================================
+
+Prevent duplicate:
+
+Email
+Username
+Phone
+
+Doctor registration must be transactional where possible.
+
+If account creation fails halfway, do not leave broken/incomplete records.
+
+If the user double-clicks:
+
+[ Create Doctor Account ]
+
+do not create duplicate accounts.
+
+
+============================================================
+29. PATIENT AND DOCTOR ACCOUNT SEPARATION
+============================================================
+
+The system must clearly distinguish:
+
+PATIENT ACCOUNT
+
+and
+
+DOCTOR ACCOUNT
+
+Patient registration must never create a doctor account.
+
+Doctor registration must never create a patient account.
+
+The role must come from the trusted backend/database.
+
+Do not allow the frontend to freely change:
+
+role = doctor
+
+through request manipulation.
+
+The backend must determine and enforce the correct role.
+
+
+============================================================
+30. DOCTOR ↔ PATIENT APPOINTMENTS
+============================================================
+
+Inspect the existing appointment system.
+
+Ensure appointments use actual relationships:
+
+patient_id
+doctor_id
+appointment_date
+appointment_time
+status
+reason
+
+Doctor Dashboard:
+
+Only appointments where:
+
+appointment.doctor_id = authenticated_doctor.id
+
+Patient Dashboard:
+
+Only appointments where:
+
+appointment.patient_id = authenticated_patient.id
+
+Never return another user's appointments.
+
+
+============================================================
+31. DOCTOR REGISTRATION UI DESIGN
+============================================================
+
+Keep the existing HealthGuardian visual style.
+
+Use:
+
+- Existing typography
+- Existing colors
+- Existing cards
+- Existing buttons
+- Existing icons
+- Existing spacing
+- Existing responsive layout
+- Existing theme
+
+The Doctor Registration page should look like a premium healthcare application.
+
+Use clear section cards.
+
+Example:
+
+DOCTOR REGISTRATION
+
+[ 1 Account ]
+[ 2 Professional ]
+[ 3 Clinic ]
+[ 4 Availability ]
+[ 5 Verification ]
+
+Each step should have:
+
+[ Back ]
+
+[ Next ]
+
+The final step should have:
+
+[ Create Doctor Account ]
+
+
+============================================================
+32. RESPONSIVE DESIGN
+============================================================
+
+Doctor and Patient authentication pages must work correctly on:
+
+Desktop
+Laptop
+Tablet
+Mobile
+
+Do not create horizontal overflow.
+
+Form fields should stack appropriately on small screens.
+
+
+============================================================
+33. API ENDPOINTS
+============================================================
+
+Inspect existing API architecture first.
+
+Create/fix equivalents of:
+
+POST /api/auth/patient/register
+
+POST /api/auth/patient/login
+
+POST /api/auth/doctor/register
+
+POST /api/auth/doctor/login
+
+GET /api/doctor/profile
+
+PUT /api/doctor/profile
+
+Use existing endpoint naming conventions if the project already has them.
+
+Do not create duplicate APIs unnecessarily.
+
+
+============================================================
+34. DOCTOR REGISTRATION API SECURITY
+============================================================
+
+Doctor registration endpoint must:
+
+1. Validate request body.
+2. Validate Doctor Verification Code.
+3. Check duplicate email.
+4. Check duplicate username.
+5. Check duplicate phone.
+6. Validate professional information.
+7. Hash password.
+8. Create account.
+9. Create doctor profile.
+10. Set role = doctor.
+11. Set verification_status = pending unless existing admin approval says otherwise.
+12. Return safe response.
+
+Never return:
+
+password
+password_hash
+doctor verification code
+secret environment variables
+authentication secrets
+
+
+============================================================
+35. ENVIRONMENT CONFIGURATION
+============================================================
+
+Add configuration similar to:
+
+DOCTOR_REGISTRATION_CODE=DOCT2026
+
+Do not commit real production secrets into Git.
+
+Create/update the project's environment example file if appropriate:
+
+.env.example
+
+Example:
+
+DOCTOR_REGISTRATION_CODE=DOCT2026
+
+Clearly document that production should use a private value.
+
+
+============================================================
+36. DOCTOR VERIFICATION CODE RATE LIMITING
+============================================================
+
+Because the verification code controls Doctor account registration, inspect whether the existing backend has rate limiting.
+
+If appropriate, protect the Doctor Registration endpoint against brute-force attempts.
+
+Do not reveal whether the submitted code partially matches the configured code.
+
+Return a generic:
+
+Invalid doctor verification code.
+
+for incorrect codes.
+
+
+============================================================
+37. FORGOT PASSWORD
+============================================================
+
+Do not break the existing password reset functionality if it exists.
+
+If it does not exist, leave the current UI architecture cleanly prepared for future password reset implementation rather than creating an insecure fake reset system.
+
+Do not implement insecure password recovery.
+
+
+============================================================
+38. LOGOUT
+============================================================
+
+Implement proper logout.
+
+After logout:
+
+Doctor:
+
+/doctor/dashboard
+
+must no longer be accessible.
+
+Patient:
+
+/patient/dashboard
+
+must no longer be accessible.
+
+Clear/invalidate the relevant authentication state according to the existing authentication architecture.
+
+
+============================================================
+39. DOCTOR PROFILE EDITING
+============================================================
+
+Existing:
+
+[ Edit Practice Details ]
+
+must continue working.
+
+A doctor should be able to update appropriate information such as:
+
+Hospital / Clinic
+Specialization
+Qualification
+Experience
+Consultation Fee
+Available Timings
+Available Days
+Clinic Address
+City
+Locality
+Pincode
+Professional Bio
+Contact information where allowed
+
+Updates must be saved to the database.
+
+After refresh, the updated information must still appear.
+
+Do not allow doctors to edit protected identity fields such as internal IDs or role.
+
+
+============================================================
+40. DOCTOR REGISTRATION AND PROFILE CONNECTION
+============================================================
+
+This relationship must work:
+
+Doctor Registration
+        ↓
+Database Doctor Record
+        ↓
+Doctor Login
+        ↓
+Authenticated Doctor ID
+        ↓
+Doctor Dashboard
+        ↓
+Doctor Profile API
+        ↓
+Database Doctor Record
+        ↓
+Display exact registered information
+
+
+============================================================
+41. NO HARDCODED DOCTOR ID
+============================================================
+
+Search the project for hardcoded doctor IDs.
+
+Do not use:
+
+doctor_id = 1
+
+or:
+
+doctor_id = 123
+
+as the current logged-in doctor.
+
+Always obtain the doctor identity from the authenticated session/token.
+
+Example:
+
+authenticated_user.id
+        ↓
+doctor profile
+        ↓
+doctor appointments
+
+
+============================================================
+42. EXISTING DASHBOARD BUG
+============================================================
+
+The existing Doctor Dashboard previously showed statistics as zero even when appointments existed.
+
+While implementing this authentication system, inspect and fix the root cause if it still exists.
+
+Verify:
+
+- Doctor ID mapping
+- Authentication user ID
+- Doctor profile ID
+- Appointment doctor_id
+- API query
+- Backend response
+- Frontend state
+- Loading state
+- Error state
+
+Dashboard statistics must be calculated from real database data.
+
+Do not use static zero values.
+
+For example:
+
+Today's Appointments
+Upcoming Appointments
+Pending Appointments
+Completed Appointments
+
+must reflect actual data.
+
+
+============================================================
+43. EXISTING DOCTOR PROFILE LOADING BUG
+============================================================
+
+The existing Doctor Profile must correctly load.
+
+When:
+
+Dr. Arvind Deshmukh
+
+logs in, the profile should retrieve his actual database information.
+
+When a new doctor registers:
+
+Dr. New Doctor
+
+logs in, the profile must retrieve Dr. New Doctor's information.
+
+Never show Dr. Arvind Deshmukh's profile to another doctor.
+
+
+============================================================
+44. TEST CASE — PATIENT REGISTRATION
+============================================================
+
+Perform a real test:
+
+Select Patient
+
+→ Patient Register
+
+→ enter valid patient data
+
+→ Create Patient Account
+
+Verify:
+
+database record created
+
+role = patient
+
+password securely hashed
+
+→ Patient Login
+
+→ Patient Dashboard
+
+Verify existing Patient Dashboard modules still work.
+
+
+============================================================
+45. TEST CASE — DOCTOR REGISTRATION WITH CORRECT CODE
+============================================================
+
+Perform a real test:
+
+Select Doctor
+
+→ Doctor Register
+
+→ enter complete doctor data
+
+→ enter:
+
+DOCT2026
+
+→ Create Doctor Account
+
+Verify:
+
+database record created
+
+role = doctor
+
+verification_status = pending unless approved by existing workflow
+
+password securely hashed
+
+doctor profile created
+
+doctor data linked correctly
+
+Then:
+
+Doctor Login
+
+→ Doctor Dashboard
+
+→ My Profile
+
+Verify that all entered information is displayed correctly.
+
+
+============================================================
+46. TEST CASE — DOCTOR REGISTRATION WITH WRONG CODE
+============================================================
+
+Perform:
+
+Doctor Register
+
+Enter complete doctor information.
+
+Enter:
+
+WRONGCODE
+
+Click:
+
+Create Doctor Account
+
+Expected:
+
+Registration rejected.
+
+Expected message:
+
+Invalid doctor verification code.
+
+MOST IMPORTANT:
+
+No doctor account should be created.
+
+No partial doctor profile should be created.
+
+Verify the database after the failed request.
+
+
+============================================================
+47. TEST CASE — BACKEND BYPASS
+============================================================
+
+Do not test only through frontend.
+
+Directly call the Doctor Registration API with:
+
+verification_code = WRONGCODE
+
+Expected:
+
+HTTP error response.
+
+No account created.
+
+Then call with:
+
+verification_code = DOCT2026
+
+Expected:
+
+successful registration.
+
+
+============================================================
+48. TEST CASE — PATIENT CANNOT ACCESS DOCTOR
+============================================================
+
+Login as Patient.
+
+Attempt:
+
+/doctor/dashboard
+
+Expected:
+
+Access denied / redirect to Patient Dashboard or Doctor Login.
+
+Also attempt Doctor API endpoints using the patient authentication token.
+
+Backend must reject unauthorized access.
+
+
+============================================================
+49. TEST CASE — DOCTOR CANNOT ACCESS PATIENT
+============================================================
+
+Login as Doctor.
+
+Attempt:
+
+/patient/dashboard
+
+Expected:
+
+Access denied / redirect appropriately.
+
+Patient-only backend endpoints must reject the doctor token where applicable.
+
+
+============================================================
+50. TEST EXISTING DOCTOR
+============================================================
+
+Do not delete existing Dr. Arvind Deshmukh.
+
+Verify:
+
+Doctor Login
+↓
+Doctor Dashboard
+↓
+Appointments
+↓
+My Profile
+
+All existing information must remain correct.
+
+If migration is required, create a safe migration.
+
+Do not destroy existing appointment relationships.
+
+
+============================================================
+51. TEST DATABASE PERSISTENCE
+============================================================
+
+After creating a new doctor:
+
+Logout.
+
+Restart backend if possible.
+
+Login again.
+
+Open My Profile.
+
+All information must still exist.
+
+Then edit:
+
+Consultation Fee
+
+or:
+
+Professional Bio
+
+Save.
+
+Refresh.
+
+Verify updated value remains.
+
+
+============================================================
+52. LOADING STATES
+============================================================
+
+Every authentication/registration API request must have proper loading states.
+
+Example:
+
+Creating Doctor Account...
+
+Do not allow multiple simultaneous submissions.
+
+Buttons should be disabled while processing.
+
+
+============================================================
+53. ERROR STATES
+============================================================
+
+If backend is unavailable:
+
+Show:
+
+Unable to connect to HealthGuardian server. Please try again.
+
+If database error occurs:
+
+Show a user-friendly error.
+
+Log the actual technical error on the backend.
+
+Do not show:
+
+stack traces
+database credentials
+environment variables
+JWT secrets
+verification code
+
+
+============================================================
+54. ACCESSIBILITY
+============================================================
+
+Use proper:
+
+labels
+form controls
+keyboard navigation
+focus states
+validation messages
+
+Do not rely only on placeholder text.
+
+Password fields should support show/hide password where appropriate.
+
+
+============================================================
+55. DO NOT BREAK EXISTING HEALTHGUARDIAN FEATURES
+============================================================
+
+Before modifying authentication, inspect dependencies between:
+
+Authentication
+Patient Dashboard
+Doctor Dashboard
+Appointments
+AI Chatbot
+Health Records
+Risk Prediction
+Reminders
+Notifications
+Doctor Profiles
+Patient Profiles
+
+After implementation, verify that existing modules continue to work.
+
+Do not remove existing APIs unless they are obsolete and replaced safely.
+
+
+============================================================
+56. IMPORTANT — DO NOT USE MOCK DATA
+============================================================
+
+Do not create fake success responses.
+
+Do not make the UI display:
+
+"Account created successfully"
+
+unless the backend actually created the account.
+
+Do not display:
+
+"Cloud API Active"
+"Verified Doctor"
+"Profile Loaded"
+
+unless the backend/system actually confirms the state.
+
+Everything should be connected to real APIs/database data.
+
+
+============================================================
+57. IMPORTANT — INSPECT BEFORE MODIFYING
+============================================================
+
+Before writing code:
+
+1. Inspect project directory.
+2. Identify frontend framework.
+3. Identify backend framework.
+4. Identify database.
+5. Identify current authentication system.
+6. Identify current user table.
+7. Identify current doctor table.
+8. Identify current patient table.
+9. Identify current appointment table.
+10. Identify existing Doctor Dashboard.
+11. Identify existing Patient Dashboard.
+12. Identify current routes.
+13. Identify current API endpoints.
+14. Identify existing authentication middleware.
+15. Identify current database relationships.
+
+Then integrate the changes.
+
+Do not blindly create duplicate systems.
+
+
+============================================================
+58. FINAL EXPECTED USER EXPERIENCE
+============================================================
+
+The final flow should be:
+
+                    HEALTHGUARDIAN
+                          |
+              How would you like to continue?
+                          |
+              ┌───────────┴───────────┐
+              |                       |
+          PATIENT                    DOCTOR
+              |                       |
+       ┌──────┴──────┐         ┌──────┴──────┐
+       |             |         |             |
+     Login        Register   Login        Register
+       |             |         |             |
+       |        Patient Form  |       Doctor Form
+       |             |         |             |
+       |             ↓         |       Account Details
+       |       Create Account  |       Professional Details
+       |                       |       Hospital Details
+       |                       |       Consultation Details
+       |                       |       Verification Code
+       |                       |       DOCT2026
+       |                       |             |
+       ↓                       ↓             ↓
+Patient Dashboard        Doctor Login   Validate Code
+                                           |
+                                      ┌────┴────┐
+                                      |         |
+                                    Wrong     Correct
+                                      |         |
+                                   Reject   Create Account
+                                                |
+                                          Doctor Login
+                                                |
+                                          Doctor Dashboard
+                                                |
+                                         Doctor My Profile
+
+
+============================================================
+59. FINAL CHECKLIST
+============================================================
+
+Before telling me the implementation is complete, verify ALL of the following:
+
+[ ] Main role-selection page exists.
+[ ] Exactly two main role options: Patient and Doctor.
+[ ] Patient Login works.
+[ ] Patient Registration works.
+[ ] Doctor Login works.
+[ ] Doctor Registration works.
+[ ] Doctor Registration is multi-step.
+[ ] Doctor Account Information exists.
+[ ] Doctor Professional Information exists.
+[ ] Doctor Medical Registration Number exists.
+[ ] Doctor Hospital/Clinic Information exists.
+[ ] Doctor Consultation Fee exists.
+[ ] Doctor Availability exists.
+[ ] Doctor Professional Bio exists.
+[ ] Doctor Verification Code exists.
+[ ] DOCT2026 works in development.
+[ ] Wrong Doctor Verification Code is rejected.
+[ ] Backend validates Doctor Verification Code.
+[ ] Verification code is not exposed in frontend source.
+[ ] Verification code is configurable through backend environment.
+[ ] Invalid code creates NO doctor account.
+[ ] Patient registration does not require Doctor Verification Code.
+[ ] Doctor role is securely assigned by backend.
+[ ] Patient role is securely assigned by backend.
+[ ] Passwords are securely hashed.
+[ ] Duplicate accounts are prevented.
+[ ] Protected routes work.
+[ ] Backend authorization works.
+[ ] Patient cannot access Doctor Dashboard.
+[ ] Doctor cannot access Patient Dashboard.
+[ ] Existing Dr. Arvind Deshmukh account is preserved.
+[ ] Existing doctor profile loads correctly.
+[ ] New doctor profile loads correctly.
+[ ] Doctor profile is database-driven.
+[ ] No hardcoded doctor ID.
+[ ] Doctor appointments are isolated correctly.
+[ ] Patient appointments are isolated correctly.
+[ ] Existing Patient Dashboard still works.
+[ ] Existing Doctor Dashboard still works.
+[ ] Doctor Dashboard statistics use real data.
+[ ] Doctor Profile editing works.
+[ ] Database persistence works after restart.
+[ ] Loading states work.
+[ ] Error states work.
+[ ] Responsive UI works.
+[ ] No secrets are exposed.
+[ ] No mock/fake success responses.
+[ ] No existing HealthGuardian functionality is unnecessarily removed.
+
+
+============================================================
+60. FINAL REPORT
+============================================================
+
+After actually implementing and testing everything, provide a concise implementation report containing:
+
+1. Files created
+2. Files modified
+3. Frontend routes added
+4. Backend APIs added/modified
+5. Database tables/columns added/modified
+6. Authentication changes
+7. Doctor registration changes
+8. Patient registration changes
+9. Doctor Verification Code implementation
+10. Role-based authorization implementation
+11. Existing Dr. Arvind Deshmukh migration/status
+12. Tests performed
+13. Test results
+14. Any remaining errors
+15. Any configuration/environment variables I need to set
+
+IMPORTANT FINAL INSTRUCTION:
+
+DO NOT say "fixed" simply because the application compiles.
+
+Actually run the application and test the complete flow end-to-end.
+
+Especially verify:
+
+Patient Register → Patient Login → Patient Dashboard
+
+Doctor Register → DOCT2026 → Database → Doctor Login → Doctor Dashboard → Doctor Profile
+
+Doctor Register → WRONG CODE → Registration rejected → NO database account created
+
+Patient → Doctor Dashboard → Access denied
+
+Doctor → Patient Dashboard → Access denied
+
+Existing Dr. Arvind Deshmukh → Login → Dashboard → Profile
+
+The final implementation must be real, database-backed, secure, dynamic and production-ready rather than a visual/mock implementation.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-01T12:15:53+05:30.
+</ADDITIONAL_METADATA>
